@@ -5,13 +5,14 @@
  */
 package net.guides.springboot2.oma.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,13 +43,18 @@ public class Ingredient implements Serializable {
     @Column(name = "ingredient_name", nullable=false)
     private String name;
     
-    @OneToMany(
+   
+    /*@OneToMany(
         mappedBy = "ingredient",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
     private List<RecipeIngredients> recipes = new ArrayList<>();
-         
+     */
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="ingredient", cascade = CascadeType.PERSIST)
+    private Set<RecipeIngredients> recipes;
+    
     @Column(name="serving_unit")
     private String servingUnit;
     
@@ -105,15 +111,15 @@ public class Ingredient implements Serializable {
      public void setName(String name) {
         this.name = name;
     }
-     
-    public List<RecipeIngredients> getRecipes() {
+
+    public Set<RecipeIngredients> getRecipes() {
         return recipes;
     }
 
-    public void setRecipes(List<RecipeIngredients> recipes) {
+    public void setRecipes(Set<RecipeIngredients> recipes) {
         this.recipes = recipes;
     }
-    
+         
     public String getServingUnit() {
         return servingUnit;
     }
@@ -186,6 +192,21 @@ public class Ingredient implements Serializable {
         this.sodium = sodium;
     }
     
+   /*ublic Ingredient addIngredient(Recipe recipe) {
+        System.out.println(" INGREDIENT ADD INGREDIENT");
+        //System.out.println("INGR: " + ingredient);
+        RecipeIngredients newIngredient = new RecipeIngredients(recipe, this);
+        List<RecipeIngredients> recipesList = this.getRecipes();
+        recipesList.add(newIngredient);
+        this.setRecipes(recipesList);
+        System.out.println("Ingr AFTER adding ingredient: " +this.recipes);
+        //recipes.add(newIngredient);
+        return this;
+        
+        
+    }
+        */
+    
     /*This methoid IS NOT ready!!!! */
     @Override
     public boolean equals(Object o) {
@@ -204,7 +225,7 @@ public class Ingredient implements Serializable {
     @Override
     public String toString() {
         return "Ingredient [id=" + id + ", name=" + name + ", servingUnit=" + servingUnit + ", numberOfUnits=" + numberOfUnits
-      + ", cals=" + cals+ ", carbs=" + carbs + ", sugar=" + sugar + ", protein=" + protein + ", fat=" + fat + ", fiber=" + fiber + ", sodium=" + sodium + "]";
+      + ", cals=" + cals+ ", carbs=" + carbs + ", sugar=" + sugar + ", protein=" + protein + ", fat=" + fat + ", fiber=" + fiber + ", sodium=" + sodium + ", recipes=" +recipes +"]";
     }
 
 }

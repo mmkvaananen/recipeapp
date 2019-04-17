@@ -6,11 +6,15 @@
 package net.guides.springboot2.oma.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +27,7 @@ import javax.persistence.Table;
  */
 @Entity(name="Users")
 @Table(name= "users")
-public class Users {
+public class Users implements Serializable {
     
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -41,13 +45,14 @@ public class Users {
     @Column(name = "user_rights", nullable=false)
     private int userRights;
     
-    @JsonManagedReference
+    /*@JsonManagedReference
     @OneToMany(
+        fetch = FetchType.LAZY,
         mappedBy = "ownerId",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private List<Recipe> recipes = new ArrayList<>();
+    private Set<Recipe> recipes = new HashSet<>();*/
     
     public Users() {
     
@@ -100,11 +105,11 @@ public class Users {
         this.userRights = rights;
     }
 
-    public List<Recipe> getRecipes() {
+   /* public Set<Recipe> getRecipes() {
         return recipes;
     }
 
-    public void setRecipes(List<Recipe> recipes) {
+    public void setRecipes(Set<Recipe> recipes) {
         this.recipes = recipes;
     }
     
@@ -118,8 +123,13 @@ public class Users {
     public void removeRecipe(Recipe recipe) {
         recipes.remove(recipe);
         recipe.setOwnerId(null);
-    }
+    }*/
      
+   /* @Override
+    public String toString() {
+        return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", rights=" + userRights
+       + ", recipes=" +recipes +"]";
+    }*/
     @Override
     public String toString() {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", rights=" + userRights

@@ -6,10 +6,13 @@
 package net.guides.springboot2.oma.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +37,8 @@ public class Recipe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
-    @JsonBackReference
+    //@JsonBackReference
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fk_user_id")
     private Users ownerId;
@@ -45,12 +49,16 @@ public class Recipe implements Serializable {
     @Column(name= "portions")
     private int portions;
     
-    @OneToMany(
+    
+    /*@OneToMany(
         mappedBy = "recipe",
         cascade = CascadeType.ALL,
         orphanRemoval = true
-    )
-    private List<RecipeIngredients> recipes = new ArrayList<>();
+    )*/
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="recipe", cascade = CascadeType.ALL)
+    private Set<RecipeIngredients> recipes;
+    //private List<RecipeIngredients> recipes = new ArrayList<>();
     
     public Recipe() {
         
@@ -97,16 +105,36 @@ public class Recipe implements Serializable {
     public void setPortions(int portions) {
         this.portions = portions;
     }
+
+    public Set<RecipeIngredients> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(Set<RecipeIngredients> recipes) {
+        this.recipes = recipes;
+    }
+
+   
+    
     
     /*when new ingredient is added to recipe, it must be added also
       to ingredient List
     */
-    public void addIngredient(Ingredient ingredient) {
+    /*public Recipe addIngredient(Ingredient ingredient) {
+        System.out.println(" RECIPE ADD INGREDIENT");
+        System.out.println("INGR TO BE ADDED: " + ingredient);
         RecipeIngredients newIngredient = new RecipeIngredients(this, ingredient);
-        recipes.add(newIngredient);
-        ingredient.getRecipes().add(newIngredient);
+        List<RecipeIngredients> recipesList = this.getRecipes();
+        recipesList.add(newIngredient);
+        this.setRecipes(recipesList);
+        
+        //recipes.add(newIngredient);
+        System.out.println("RECIPE AFTER adding ingredient: " + this.recipes);
+        return this;
+        
+        
     }
- 
+ */
     public void removeIngredient(Ingredient ingredient) {
         for (Iterator<RecipeIngredients> iterator = recipes.iterator();
              iterator.hasNext(); ) {
@@ -124,6 +152,6 @@ public class Recipe implements Serializable {
     
     @Override
     public String toString() {
-        return "Recipe [id=" + id + ", owner=" + ownerId + ", name=" + name + ", portions=" + portions + "]";
+        return "Recipe [id=" + id + ", owner=" + ownerId + ", name=" + name + ", portions=" + portions + ", recipes=" +recipes +"]";
     }
 }

@@ -38,10 +38,20 @@ public class UsersController {
     @GetMapping("/users/{id}")
     public ResponseEntity<Users> getUserById(@PathVariable(value = "id") Long userId)
         throws ResourceNotFoundException {
-        Users user = usersRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-        System.out.println("USER CONTROLLER user " + user);
-        return ResponseEntity.ok().body(user);
+        try {
+            System.out.println("USERID to be searched for: " + userId);
+
+            Users user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
+            System.out.println("USER CONTROLLER user " + user);
+            return ResponseEntity.ok().body(user);
+        }
+        catch(ResourceNotFoundException e) {
+            System.out.println("Error finding user: " +e);
+            return null;
+        }
+        
+        
     }
     
     @PostMapping("/users")

@@ -5,14 +5,17 @@
  */
 package net.guides.springboot2.oma.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  *
@@ -25,12 +28,27 @@ public class RecipeIngredients {
     @EmbeddedId
     private RecipeIngredientsId id;
     
-    @ManyToOne
+    
+    /*@ManyToOne(fetch = FetchType.LAZY)
     @MapsId("recipeId")
     private Recipe recipe;
     
+   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("ingredientId")
+    private Ingredient ingredient;*/
+    
+    
+    @JsonBackReference
+    @ManyToOne
+    @MapsId("recipeId")
+    @JoinColumn(name="recipeId")
+    private Recipe recipe;
+    
+    
     @ManyToOne
     @MapsId("ingredientId")
+    @JoinColumn(name="ingredientId")
     private Ingredient ingredient;
     
     @Column(name="step")
@@ -79,6 +97,7 @@ public class RecipeIngredients {
     public void setAmount(int amount) {
         this.amount = amount;
     }
+    
     
     
     @Override

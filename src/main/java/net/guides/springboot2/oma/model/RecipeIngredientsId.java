@@ -63,4 +63,8 @@ public class RecipeIngredientsId implements Serializable {
     public int hashCode() {
         return Objects.hash(recipeId, ingredientId);
     }
+    @Override
+    public String toString() {
+        return " [recipeId=" + recipeId + ", ingredientId=" + ingredientId + "]";
+    }
 }

@@ -5,11 +5,17 @@
  */
 package net.guides.springboot2.oma.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import net.guides.springboot2.oma.exception.ResourceNotFoundException;
+import net.guides.springboot2.oma.model.Ingredient;
 import net.guides.springboot2.oma.model.Recipe;
+import net.guides.springboot2.oma.model.RecipeIngredients;
 import net.guides.springboot2.oma.model.Users;
+import net.guides.springboot2.oma.repository.IngredientRepository;
 import net.guides.springboot2.oma.repository.RecipeRepository;
 import net.guides.springboot2.oma.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +39,8 @@ public class RecipeController {
     private RecipeRepository recipeRepository;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private IngredientRepository ingredientRepository;
     
     @GetMapping("/recipes")
     public List<Recipe> getAllRecipes() {
@@ -42,7 +50,7 @@ public class RecipeController {
    
 
     @GetMapping("/recipes/{id}")
-    public ResponseEntity<Recipe> getEmployeeById(@PathVariable(value = "id") Long recipeId)
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable(value = "id") Long recipeId)
         throws ResourceNotFoundException {
         Recipe recipe = recipeRepository.findById(recipeId)
           .orElseThrow(() -> new ResourceNotFoundException("Recipe not found for this id :: " + recipeId));
@@ -58,8 +66,11 @@ public class RecipeController {
         Users user = usersRepository.findById(userId) 
           .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
         System.out.println("USER " + user);
-        Recipe res = user.addRecipe(recipe);
-        return recipeRepository.save(res);
+        recipe.setOwnerId(user);
+        //Recipe res = user.addRecipe(recipe);
+        return recipeRepository.save(recipe);
     }
     
+
+
 }
