@@ -6,7 +6,9 @@
 package net.guides.springboot2.oma.repository;
 
 
+import java.util.List;
 import net.guides.springboot2.oma.model.Recipe;
+import net.guides.springboot2.oma.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +18,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+    public List<Recipe> findRecipesByOwnerId(Users ownerId);
     
 }

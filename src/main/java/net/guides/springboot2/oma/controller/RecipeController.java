@@ -57,6 +57,26 @@ public class RecipeController {
         return ResponseEntity.ok().body(recipe);
     }
     
+    @GetMapping("/recipes/user/{id}")
+    public List<Recipe> getRecipesByUser(@PathVariable(value = "id") Long userId)
+        throws ResourceNotFoundException {
+        List<Recipe> recipes;
+        try {
+            Users user = usersRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
+            System.out.println("User from database: " + user);
+            recipes = recipeRepository.findRecipesByOwnerId(user);
+                 
+            //return ResponseEntity.ok().body(recipe);
+            
+        }
+        catch(ResourceNotFoundException e) {
+            System.out.println("Error finding user: " + e);
+            recipes = null;
+        }
+        return recipes;
+    }
+    
     @PostMapping("/recipes/{userid}")
     public Recipe createRecipe(@Valid @RequestBody Recipe recipe, @PathVariable(value="userid") Long userId) throws ResourceNotFoundException {
         System.out.println("POST");
