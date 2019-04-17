@@ -45,6 +45,11 @@ public class Users implements Serializable {
     @Column(name = "user_rights", nullable=false)
     private int userRights;
     
+    
+    //Relation between users and recipes is implemented using
+    //@ManyToOne association in the recipe class
+    
+    //first try was to use birectional @OneToMany association and collections
     /*@JsonManagedReference
     @OneToMany(
         fetch = FetchType.LAZY,

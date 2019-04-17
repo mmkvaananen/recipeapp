@@ -5,15 +5,10 @@
  */
 package net.guides.springboot2.oma.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import net.guides.springboot2.oma.exception.ResourceNotFoundException;
-import net.guides.springboot2.oma.model.Ingredient;
 import net.guides.springboot2.oma.model.Recipe;
-import net.guides.springboot2.oma.model.RecipeIngredients;
 import net.guides.springboot2.oma.model.Users;
 import net.guides.springboot2.oma.repository.IngredientRepository;
 import net.guides.springboot2.oma.repository.RecipeRepository;
@@ -66,9 +61,6 @@ public class RecipeController {
             .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
             System.out.println("User from database: " + user);
             recipes = recipeRepository.findRecipesByOwnerId(user);
-                 
-            //return ResponseEntity.ok().body(recipe);
-            
         }
         catch(ResourceNotFoundException e) {
             System.out.println("Error finding user: " + e);
@@ -82,12 +74,11 @@ public class RecipeController {
         System.out.println("POST");
         System.out.println(recipe);
         System.out.println("USERID:" + userId);
-        //User object is needed so that recipe can be added to users recipe list and ownerid can be added to recipe
+        //User object is needed so that it can be added to ownerid
         Users user = usersRepository.findById(userId) 
           .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
         System.out.println("USER " + user);
         recipe.setOwnerId(user);
-        //Recipe res = user.addRecipe(recipe);
         return recipeRepository.save(recipe);
     }
     
